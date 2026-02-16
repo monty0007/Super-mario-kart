@@ -7,6 +7,8 @@ import { ASSETS } from './constants';
 import { MainMenu } from './components/ui/MainMenu';
 import { HUD } from './components/ui/HUD';
 import { GameOver } from './components/ui/GameOver';
+import { TouchControls } from './components/ui/TouchControls';
+import { GameEngine } from './game/GameEngine';
 
 const PRESET_LEVELS: LevelConfig[] = [
   {
@@ -61,6 +63,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   const [selectedColor, setSelectedColor] = useState<string>(ASSETS.CAR_BODY);
+  const [engine, setEngine] = useState<GameEngine | null>(null);
 
   useEffect(() => {
       const saved = localStorage.getItem('kart_highscore');
@@ -99,12 +102,12 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-2 md:p-4 overflow-hidden">
       <div className="sr-only" role="status" aria-live="polite">
         {announcement}
       </div>
 
-      <div className="relative w-full max-w-4xl aspect-[4/3] bg-black rounded-xl overflow-hidden shadow-2xl border-4 border-gray-800">
+      <div className="relative w-full max-w-4xl aspect-[4/3] bg-black rounded-xl overflow-hidden shadow-2xl border-2 md:border-4 border-gray-800 touch-none select-none">
         
         <GameCanvas 
           gameState={gameState} 
@@ -113,10 +116,14 @@ function App() {
           onScoreUpdate={setScore}
           onAnnounce={setAnnouncement}
           carColor={selectedColor}
+          onEngineInit={setEngine}
         />
 
         {gameState === GameState.PLAYING && (
-          <HUD score={score} levelName={levelData.name} />
+          <>
+            <HUD score={score} levelName={levelData.name} />
+            <TouchControls engine={engine} />
+          </>
         )}
 
         {gameState === GameState.MENU && (
@@ -136,8 +143,8 @@ function App() {
 
         {gameState === GameState.GENERATING && (
           <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center text-white z-50">
-             <Loader2 size={64} className="animate-spin text-purple-500 mb-4" />
-             <p className="text-xl animate-pulse font-['Press_Start_2P'] text-center px-4 leading-relaxed">
+             <Loader2 size={48} className="animate-spin text-purple-500 mb-4 md:w-16 md:h-16" />
+             <p className="text-sm md:text-xl animate-pulse font-['Press_Start_2P'] text-center px-4 leading-relaxed">
                  CONSTRUCTING<br/>WORLD...
              </p>
           </div>
@@ -153,7 +160,7 @@ function App() {
         )}
 
         {gameState === GameState.PLAYING && (
-            <div className="absolute bottom-4 right-4 text-white/40 text-[10px] pointer-events-none font-sans bg-black/50 p-2 rounded">
+            <div className="hidden md:block absolute bottom-4 right-4 text-white/40 text-[10px] pointer-events-none font-sans bg-black/50 p-2 rounded">
                 W / UP to JUMP<br/>
                 SPACE to SHOOT (Requires Flower)
             </div>

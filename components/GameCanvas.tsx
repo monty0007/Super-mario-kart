@@ -10,6 +10,7 @@ interface GameCanvasProps {
   onScoreUpdate: (score: number) => void;
   onAnnounce: (message: string) => void;
   carColor: string;
+  onEngineInit?: (engine: GameEngine) => void;
 }
 
 const GameCanvas: React.FC<GameCanvasProps> = ({ 
@@ -18,7 +19,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
   levelData, 
   onScoreUpdate,
   onAnnounce,
-  carColor
+  carColor,
+  onEngineInit
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
@@ -34,6 +36,10 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       onScoreUpdate,
       onAnnounce
     );
+
+    if (onEngineInit) {
+        onEngineInit(engineRef.current);
+    }
 
     return () => {
       engineRef.current?.cleanup();
@@ -71,7 +77,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       ref={canvasRef} 
       width={CANVAS_WIDTH} 
       height={CANVAS_HEIGHT} 
-      className="w-full h-full object-contain bg-sky-300 outline-none"
+      className="w-full h-full object-contain bg-sky-300 outline-none select-none touch-none"
       tabIndex={0}
       aria-label="Game Screen. Press W to jump, Space to shoot."
     />

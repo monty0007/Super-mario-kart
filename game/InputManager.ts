@@ -3,6 +3,7 @@ import { InputAction, KeyMapping } from "../types";
 
 export class InputManager {
   private activeKeys: Set<string> = new Set();
+  private virtualActions: Set<InputAction> = new Set();
   private mapping: KeyMapping;
 
   constructor(customMapping?: Partial<KeyMapping>) {
@@ -20,7 +21,6 @@ export class InputManager {
     window.removeEventListener('keyup', this.handleKeyUp);
   }
 
-  // Sanitize input: We only care about keys, no complex data injection possible here.
   private handleKeyDown = (e: KeyboardEvent) => {
     // Prevent default scrolling for game keys
     if (this.isGameKey(e.code)) {
@@ -37,13 +37,22 @@ export class InputManager {
     return Object.values(this.mapping).some(keys => keys.includes(code));
   }
 
+  // Allow setting actions programmatically (for touch controls)
+  public setVirtualAction(action: InputAction, active: boolean) {
+    if (active) {
+      this.virtualActions.add(action);
+    } else {
+      this.virtualActions.delete(action);
+    }
+  }
+
   public isActionActive(action: InputAction): boolean {
     const keys = this.mapping[action];
-    return keys.some(key => this.activeKeys.has(key));
+    // Check both physical keys and virtual touch buttons
+    return keys.some(key => this.activeKeys.has(key)) || this.virtualActions.has(action);
   }
 
   public remap(action: InputAction, newKey: string) {
-    // Basic validation
     if (!newKey || typeof newKey !== 'string') return;
     this.mapping[action] = [newKey];
   }
