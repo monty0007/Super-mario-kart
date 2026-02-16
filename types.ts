@@ -37,6 +37,8 @@ export interface Obstacle extends Entity {
   id: string;
   passed?: boolean;
   isUsed?: boolean;
+  vx?: number; // For moving entities like shells or mushrooms
+  vy?: number;
 }
 
 export interface Projectile extends Entity {

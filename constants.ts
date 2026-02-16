@@ -1,31 +1,48 @@
-export const GRAVITY = 0.6;
-export const JUMP_FORCE = -13; 
+export const GRAVITY = 1.5;
+export const JUMP_FORCE = -22; 
 export const GAME_SPEED_INITIAL = 6;
-export const MAX_GAME_SPEED = 12;
-export const SPEED_INCREMENT = 0.0005;
+export const MAX_GAME_SPEED = 14;
+export const SPEED_INCREMENT = 0.0008;
 export const GROUND_HEIGHT = 80;
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
 
+export const CAR_COLORS = [
+  { name: 'Mario Red', value: '#e70000', wheel: '#000000' },
+  { name: 'Luigi Green', value: '#00aa00', wheel: '#000000' },
+  { name: 'Peach Pink', value: '#ff69b4', wheel: '#550000' },
+  { name: 'Toad Blue', value: '#0000ff', wheel: '#000000' },
+  { name: 'Wario Yellow', value: '#ffd700', wheel: '#550055' },
+  { name: 'Waluigi Purple', value: '#800080', wheel: '#aaaa00' },
+  { name: 'Metal', value: '#808080', wheel: '#333333' },
+  { name: 'Rainbow', value: 'RAINBOW', wheel: '#ffffff' },
+];
+
+export const DIFFICULTY_SETTINGS: Record<string, { speedMult: number, gapMult: number, maxSpeed: number, spawnRate: number }> = {
+  Easy: { speedMult: 0.6, gapMult: 1.5, maxSpeed: 10, spawnRate: 1.2 },
+  Medium: { speedMult: 1.0, gapMult: 1.0, maxSpeed: 14, spawnRate: 1.0 },
+  Hard: { speedMult: 1.4, gapMult: 0.8, maxSpeed: 18, spawnRate: 0.8 },
+};
+
 export const ENTITY_CONFIG = {
   PLAYER: { WIDTH: 50, HEIGHT: 30, X_OFFSET: 100 },
   OBSTACLE: {
-    PIPE: { WIDTH: 50, BASE_HEIGHT: 60, VARIANCE: 50 },
-    BLOCK: { WIDTH: 40, HEIGHT: 40 },
-    CAT: { WIDTH: 35, HEIGHT: 30 },
-    TURTLE: { WIDTH: 35, HEIGHT: 40 },
-    COIN: { WIDTH: 20, HEIGHT: 28 },
+    PIPE: { WIDTH: 60, BASE_HEIGHT: 60, VARIANCE: 60 },
+    BLOCK: { WIDTH: 45, HEIGHT: 45 },
+    CAT: { WIDTH: 40, HEIGHT: 35 },
+    TURTLE: { WIDTH: 40, HEIGHT: 30 },
+    COIN: { WIDTH: 25, HEIGHT: 30 },
     FLOWER: { WIDTH: 30, HEIGHT: 30 },
   },
   BOSS: {
-    WIDTH: 150, 
-    HEIGHT: 120, 
-    SPAWN_DISTANCE: 2000, 
-    HP: 10,
-    SHOOT_INTERVAL: 100
+    WIDTH: 180, 
+    HEIGHT: 150, 
+    SPAWN_DISTANCE: 2500, 
+    HP: 15,
+    SHOOT_INTERVAL: 80
   },
-  PROJECTILE: { WIDTH: 15, HEIGHT: 15, SPEED: 10 }
+  PROJECTILE: { WIDTH: 18, HEIGHT: 18, SPEED: 12 }
 };
 
 export const CONTROLS = {
@@ -40,40 +57,40 @@ export const CONTROLS = {
 
 export const THEMES = {
   OVERWORLD: {
-    SKY: '#5c94fc',
-    GROUND: '#c84c0c',
-    GROUND_DETAIL: '#dba463', 
-    PIPE: '#00aa00',
+    SKY: '#63adff',
+    GROUND: '#5c9e2b',
+    GROUND_DETAIL: '#7ac24a', 
+    PIPE: '#00c200',
     PIPE_HIGHLIGHT: '#55ff55',
-    BLOCK: '#b84e00',
-    BRICK_LINES: '#000000',
-    HILL: '#009900',
-    BUSH: '#00cc00',
+    BLOCK: '#c97726',
+    BRICK_LINES: '#5c3208',
+    HILL_DARK: '#00852d',
+    HILL_LIGHT: '#1cb050',
     CLOUD: '#ffffff'
   },
   UNDERGROUND: {
-    SKY: '#000000',
-    GROUND: '#0055aa',
-    GROUND_DETAIL: '#4499ea',
+    SKY: '#1a1a2e',
+    GROUND: '#7a5a4a',
+    GROUND_DETAIL: '#8f6c5b',
     PIPE: '#22cc22',
     PIPE_HIGHLIGHT: '#88ff88',
-    BLOCK: '#0055aa',
-    BRICK_LINES: '#ffffff',
-    HILL: '#004400',
-    BUSH: '#006600',
-    CLOUD: '#444444'
+    BLOCK: '#4a5a7a',
+    BRICK_LINES: '#1a1a2e',
+    HILL_DARK: '#3a2a4a',
+    HILL_LIGHT: '#5a4a6a',
+    CLOUD: '#2a2a3e'
   },
   CASTLE: {
-    SKY: '#000000',
-    GROUND: '#888888',
-    GROUND_DETAIL: '#aaaaaa',
-    PIPE: '#555555',
-    PIPE_HIGHLIGHT: '#777777',
-    BLOCK: '#884400',
+    SKY: '#2e0a0a',
+    GROUND: '#555555',
+    GROUND_DETAIL: '#777777',
+    PIPE: '#444444',
+    PIPE_HIGHLIGHT: '#666666',
+    BLOCK: '#8f3c3c',
     BRICK_LINES: '#000000',
-    HILL: '#330000',
-    BUSH: '#550000',
-    CLOUD: '#333333'
+    HILL_DARK: '#440000',
+    HILL_LIGHT: '#660000',
+    CLOUD: '#442222'
   }
 };
 

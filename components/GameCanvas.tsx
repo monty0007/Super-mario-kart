@@ -9,6 +9,7 @@ interface GameCanvasProps {
   levelData: LevelConfig | null;
   onScoreUpdate: (score: number) => void;
   onAnnounce: (message: string) => void;
+  carColor: string;
 }
 
 const GameCanvas: React.FC<GameCanvasProps> = ({ 
@@ -16,7 +17,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
   setGameState, 
   levelData, 
   onScoreUpdate,
-  onAnnounce
+  onAnnounce,
+  carColor
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
@@ -44,6 +46,13 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       engineRef.current.setLevel(levelData);
     }
   }, [levelData]);
+
+  // Sync Car Color
+  useEffect(() => {
+      if (engineRef.current) {
+          engineRef.current.setCarColor(carColor);
+      }
+  }, [carColor]);
 
   // Sync Game State (Start/Stop)
   useEffect(() => {

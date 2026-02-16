@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { GameState, LevelConfig, ObstacleType } from './types';
 import GameCanvas from './components/GameCanvas';
 import { generateLevel } from './services/geminiService';
-import { Loader2, Zap, Play, RotateCcw, Map, Trophy } from 'lucide-react';
+import { Loader2, Zap, Play, RotateCcw, Map, Trophy, Palette } from 'lucide-react';
+import { CAR_COLORS, ASSETS } from './constants';
 
 const PRESET_LEVELS: LevelConfig[] = [
   {
     id: 'classic_1_1',
     name: "Classic 1-1",
     difficulty: "Easy",
-    description: "The legendary beginning. A faithful recreation of the classic map.",
+    description: "The legendary beginning. Wide gaps and simple enemies.",
     theme: 'OVERWORLD',
     obstacles: [
        ObstacleType.QUESTION_BLOCK, ObstacleType.COIN, ObstacleType.BLOCK, ObstacleType.QUESTION_BLOCK, ObstacleType.BLOCK, ObstacleType.PIRANHA,
@@ -37,7 +38,7 @@ const PRESET_LEVELS: LevelConfig[] = [
     id: 'castle_1_4',
     name: "Bowser's Road",
     difficulty: "Hard",
-    description: "Intense heat and tricky jumps.",
+    description: "Intense heat, fast speed, and tricky jumps.",
     theme: 'CASTLE',
     obstacles: [
         ObstacleType.GAP, ObstacleType.GAP, ObstacleType.BLOCK, ObstacleType.GAP,
@@ -56,6 +57,7 @@ function App() {
   const [highScore, setHighScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const [selectedColor, setSelectedColor] = useState<string>(ASSETS.CAR_BODY);
 
   useEffect(() => {
       const saved = localStorage.getItem('kart_highscore');
@@ -114,6 +116,7 @@ function App() {
           levelData={levelData}
           onScoreUpdate={setScore}
           onAnnounce={setAnnouncement}
+          carColor={selectedColor}
         />
 
         {/* UI Overlay: HUD */}
@@ -132,62 +135,90 @@ function App() {
 
         {/* UI Overlay: Menu */}
         {gameState === GameState.MENU && (
-          <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-white backdrop-blur-sm z-20">
-            <h1 className="text-4xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-yellow-400 to-yellow-600 mb-8 font-['Press_Start_2P'] tracking-tighter text-center drop-shadow-[4px_4px_0_rgba(0,0,0,1)] stroke-black" style={{ WebkitTextStroke: '2px black' }}>
+          <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-white backdrop-blur-sm z-20 overflow-y-auto py-8">
+            <h1 className="text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-yellow-400 to-yellow-600 mb-6 font-['Press_Start_2P'] tracking-tighter text-center drop-shadow-[4px_4px_0_rgba(0,0,0,1)] stroke-black" style={{ WebkitTextStroke: '2px black' }}>
               SUPER KART<br/>BROS
             </h1>
             
-            <div className="bg-gray-800/90 p-6 rounded-lg border-2 border-white/20 max-w-md w-full mb-6 shadow-xl">
-              <div className="flex items-center gap-2 mb-4">
-                 <Map className="text-blue-400" />
-                 <h2 className="text-lg font-bold text-blue-200">Select Track</h2>
-              </div>
-              
-              <select 
-                className="w-full bg-gray-900 border border-gray-600 text-white rounded p-3 mb-4 font-['Press_Start_2P'] text-xs focus:ring-2 focus:ring-green-500 outline-none"
-                onChange={handleLevelSelect}
-                value={levelData.id.startsWith('gen') ? '' : levelData.id}
-              >
-                 {PRESET_LEVELS.map(l => (
-                     <option key={l.id} value={l.id}>{l.name} - {l.difficulty}</option>
-                 ))}
-                 {levelData.id.startsWith('gen') && <option value={levelData.id}>✨ {levelData.name}</option>}
-              </select>
+            <div className="flex flex-col md:flex-row gap-4 w-full max-w-3xl px-4">
+                
+                {/* Left Column: Settings */}
+                <div className="flex-1 space-y-4">
+                    <div className="bg-gray-800/90 p-5 rounded-lg border-2 border-white/20 shadow-xl">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Map className="text-blue-400" size={18} />
+                            <h2 className="text-sm font-bold text-blue-200">Select Track</h2>
+                        </div>
+                        
+                        <select 
+                            className="w-full bg-gray-900 border border-gray-600 text-white rounded p-3 mb-2 font-['Press_Start_2P'] text-[10px] focus:ring-2 focus:ring-green-500 outline-none"
+                            onChange={handleLevelSelect}
+                            value={levelData.id.startsWith('gen') ? '' : levelData.id}
+                        >
+                            {PRESET_LEVELS.map(l => (
+                                <option key={l.id} value={l.id}>{l.name} [{l.difficulty}]</option>
+                            ))}
+                            {levelData.id.startsWith('gen') && <option value={levelData.id}>✨ {levelData.name}</option>}
+                        </select>
 
-              <p className="text-gray-400 text-xs mb-4 min-h-[40px] italic bg-black/20 p-2 rounded">
-                  "{levelData.description}"
-              </p>
+                        <p className="text-gray-400 text-[10px] italic bg-black/20 p-2 rounded h-12 overflow-hidden">
+                            "{levelData.description}"
+                        </p>
+                    </div>
 
-              
-              <button 
-                onClick={handleStartGame}
-                className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded shadow-[0_4px_0_rgb(21,128,61)] active:shadow-[0_0px_0_rgb(21,128,61)] active:translate-y-1 transition-all flex items-center justify-center gap-3 text-lg"
-              >
-                <Play size={24} fill="currentColor" /> START ENGINE
-              </button>
-            </div>
+                    <div className="bg-gray-800/90 p-5 rounded-lg border-2 border-white/20 shadow-xl">
+                         <div className="flex items-center gap-2 mb-3">
+                            <Palette className="text-pink-400" size={18} />
+                            <h2 className="text-sm font-bold text-pink-200">Kart Color</h2>
+                        </div>
+                        <div className="grid grid-cols-4 gap-2">
+                            {CAR_COLORS.map((c) => (
+                                <button
+                                    key={c.value}
+                                    onClick={() => setSelectedColor(c.value)}
+                                    className={`w-full aspect-square rounded border-2 transition-all ${selectedColor === c.value ? 'border-white scale-110 shadow-[0_0_10px_white]' : 'border-transparent opacity-80 hover:opacity-100'}`}
+                                    style={{ backgroundColor: c.value }}
+                                    title={c.name}
+                                    aria-label={`Select ${c.name}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
 
-            <div className="bg-gradient-to-r from-purple-900/80 to-indigo-900/80 p-6 rounded-lg border-2 border-purple-500/30 max-w-md w-full shadow-lg">
-              <label className="text-xs text-purple-200 mb-2 flex items-center gap-2">
-                  <Zap size={14} />
-                  CREATE CUSTOM TRACK (GEMINI AI)
-              </label>
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="e.g. 'Bowser castle with many gaps'"
-                  className="flex-1 bg-black/40 border border-purple-500/50 rounded px-3 py-2 text-xs focus:outline-none focus:border-purple-400 text-white placeholder-gray-500"
-                />
-                <button 
-                  onClick={handleGenerateLevel}
-                  disabled={isLoading || !prompt}
-                  className="bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white px-4 py-2 rounded font-bold shadow-[0_4px_0_rgb(107,33,168)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center min-w-[50px]"
-                >
-                  {isLoading ? <Loader2 className="animate-spin" size={18} /> : "GO"}
-                </button>
-              </div>
+                {/* Right Column: Actions */}
+                <div className="flex-1 space-y-4 flex flex-col">
+                     <div className="bg-gradient-to-r from-purple-900/80 to-indigo-900/80 p-5 rounded-lg border-2 border-purple-500/30 shadow-lg">
+                        <label className="text-[10px] text-purple-200 mb-2 flex items-center gap-2 font-bold">
+                            <Zap size={14} />
+                            AI TRACK GENERATOR
+                        </label>
+                        <div className="flex gap-2">
+                            <input 
+                            type="text" 
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            placeholder="e.g. 'Ice world hard'"
+                            className="flex-1 bg-black/40 border border-purple-500/50 rounded px-3 py-2 text-[10px] focus:outline-none focus:border-purple-400 text-white placeholder-gray-500"
+                            />
+                            <button 
+                            onClick={handleGenerateLevel}
+                            disabled={isLoading || !prompt}
+                            className="bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white px-3 py-2 rounded font-bold shadow-[0_4px_0_rgb(107,33,168)] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center"
+                            >
+                            {isLoading ? <Loader2 className="animate-spin" size={16} /> : "GEN"}
+                            </button>
+                        </div>
+                    </div>
+
+                    <button 
+                        onClick={handleStartGame}
+                        className="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-6 rounded-lg shadow-[0_6px_0_rgb(21,128,61)] active:shadow-[0_2px_0_rgb(21,128,61)] active:translate-y-1 transition-all flex items-center justify-center gap-3 text-xl animate-pulse"
+                    >
+                        <Play size={32} fill="currentColor" /> RACE!
+                    </button>
+                </div>
+
             </div>
           </div>
         )}
