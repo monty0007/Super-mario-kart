@@ -47,9 +47,9 @@ export const ENTITY_CONFIG = {
 
 export const CONTROLS = {
   DEFAULT_MAPPING: {
-    JUMP: ['ArrowUp', 'KeyW'],
+    JUMP: ['ArrowUp', 'KeyW', 'KeyZ'], // KeyZ for AZERTY support
     SHOOT: ['Space', 'ShiftLeft', 'ShiftRight', 'KeyF'],
-    LEFT: ['ArrowLeft', 'KeyA'],
+    LEFT: ['ArrowLeft', 'KeyA', 'KeyQ'], // KeyQ for AZERTY support
     RIGHT: ['ArrowRight', 'KeyD'],
     DOWN: ['ArrowDown', 'KeyS']
   }

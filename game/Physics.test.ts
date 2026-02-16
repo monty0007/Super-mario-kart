@@ -1,9 +1,12 @@
 import { Physics } from './Physics';
 import { Entity } from '../types';
 
-// Tests commented out as @types/jest is not available in the environment.
-// To run these tests, install jest and @types/jest, then uncomment the code below.
-/*
+// Declaration for Jest globals to avoid compilation errors
+declare var describe: any;
+declare var test: any;
+declare var expect: any;
+
+// NOTE: Ensure 'jest' or 'vitest' and associated types are installed in your environment to run these tests.
 describe('Physics Engine', () => {
   
   describe('checkCollision (AABB)', () => {
@@ -21,10 +24,6 @@ describe('Physics Engine', () => {
 
     test('should respect padding', () => {
       // Touching edge-to-edge
-      const obstacle: Entity = { x: 50, y: 0, width: 50, height: 50 };
-      // Standard overlap check would be true/edge case depending on > vs >=
-      // Implementation uses < and > so exact edge is false, but slight overlap is true.
-      
       const overlapObstacle: Entity = { x: 40, y: 0, width: 50, height: 50 };
       // Padding of 15 means effective player width is smaller for collision calc
       expect(Physics.checkCollision(player, overlapObstacle, 0)).toBe(true);
@@ -52,4 +51,3 @@ describe('Physics Engine', () => {
     });
   });
 });
-*/
