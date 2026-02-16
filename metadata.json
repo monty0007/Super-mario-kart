@@ -1,0 +1,5 @@
+{
+  "name": "Super Kart Bros",
+  "description": "A side-scrolling endless runner where you drive a kart through a generated Mario-style world. Use Gemini to generate unique levels.",
+  "requestFramePermissions": []
+}
