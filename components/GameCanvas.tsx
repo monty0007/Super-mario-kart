@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GameState, LevelConfig } from '../types';
 import { GameEngine } from '../game/GameEngine';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants';
@@ -13,10 +13,10 @@ interface GameCanvasProps {
   onEngineInit?: (engine: GameEngine) => void;
 }
 
-const GameCanvas: React.FC<GameCanvasProps> = ({ 
-  gameState, 
-  setGameState, 
-  levelData, 
+const GameCanvas: React.FC<GameCanvasProps> = ({
+  gameState,
+  setGameState,
+  levelData,
   onScoreUpdate,
   onAnnounce,
   carColor,
@@ -24,6 +24,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
+  const [description, setDescription] = useState("Game Stopped. Press Start to play.");
 
   // Initialize Engine
   useEffect(() => {
@@ -32,13 +33,18 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     // Instantiate game engine with callbacks
     engineRef.current = new GameEngine(
       canvasRef.current,
-      (newState) => setGameState(newState),
+      (newState) => {
+        setGameState(newState);
+        if (newState === GameState.PLAYING) setDescription("Game Running. Press Arrow Keys to move, Space to shoot.");
+        else if (newState === GameState.GAME_OVER) setDescription("Game Over.");
+        else if (newState === GameState.VICTORY) setDescription("Victory! Level Complete.");
+      },
       onScoreUpdate,
       onAnnounce
     );
 
     if (onEngineInit) {
-        onEngineInit(engineRef.current);
+      onEngineInit(engineRef.current);
     }
 
     return () => {
@@ -50,14 +56,15 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
   useEffect(() => {
     if (engineRef.current && levelData) {
       engineRef.current.setLevel(levelData);
+      setDescription(`Level loaded: ${levelData.name}. Difficulty: ${levelData.difficulty}.`);
     }
   }, [levelData]);
 
   // Sync Car Color
   useEffect(() => {
-      if (engineRef.current) {
-          engineRef.current.setCarColor(carColor);
-      }
+    if (engineRef.current) {
+      engineRef.current.setCarColor(carColor);
+    }
   }, [carColor]);
 
   // Sync Game State (Start/Stop)
@@ -72,15 +79,30 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     }
   }, [gameState]);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Prevent scrolling with keys
+    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+      e.preventDefault();
+    }
+  };
+
   return (
-    <canvas 
-      ref={canvasRef} 
-      width={CANVAS_WIDTH} 
-      height={CANVAS_HEIGHT} 
-      className="w-full h-full object-contain bg-sky-300 outline-none select-none touch-none"
-      tabIndex={0}
-      aria-label="Game Screen. Press W to jump, Space to shoot."
-    />
+    <div className="relative w-full h-full">
+      <canvas
+        ref={canvasRef}
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
+        className="w-full h-full object-contain bg-sky-300 outline-none select-none touch-none focus:ring-4 focus:ring-blue-500 rounded-lg"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        aria-label="Game Screen"
+        aria-describedby="game-description"
+        role="application"
+      />
+      <div id="game-description" className="sr-only" aria-live="polite">
+        {description}
+      </div>
+    </div>
   );
 };
 

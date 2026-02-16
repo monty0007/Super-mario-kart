@@ -1,12 +1,20 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { LevelConfig, ObstacleType } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+let ai: GoogleGenAI | null = null;
 
 export const generateLevel = async (prompt: string): Promise<LevelConfig> => {
   try {
+    if (!process.env.API_KEY) {
+      throw new Error("API Key is missing");
+    }
+
+    if (!ai) {
+      ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    }
+
     const modelId = "gemini-3-flash-preview";
-    
+
     const response = await ai.models.generateContent({
       model: modelId,
       contents: `Generate a Mario-style level configuration based on this description: "${prompt}". 
@@ -36,7 +44,7 @@ export const generateLevel = async (prompt: string): Promise<LevelConfig> => {
 
     const text = response.text;
     if (!text) throw new Error("No response from Gemini");
-    
+
     const data = JSON.parse(text);
     return { ...data, id: 'gen_' + Date.now(), isCustom: true };
   } catch (error) {
@@ -46,11 +54,11 @@ export const generateLevel = async (prompt: string): Promise<LevelConfig> => {
       id: 'fallback_error',
       name: "Classic Fallback",
       difficulty: "Medium",
-      description: "Network error? No problem. Here is a classic pipe run.",
+      description: "Network error or missing key. Here is a classic pipe run.",
       theme: 'OVERWORLD',
       obstacles: [
-        ObstacleType.COIN, ObstacleType.QUESTION_BLOCK, ObstacleType.FIRE_FLOWER, 
-        ObstacleType.PIPE, ObstacleType.PIRANHA, ObstacleType.GAP, 
+        ObstacleType.COIN, ObstacleType.QUESTION_BLOCK, ObstacleType.FIRE_FLOWER,
+        ObstacleType.PIPE, ObstacleType.PIRANHA, ObstacleType.GAP,
         ObstacleType.PIPE, ObstacleType.GOOMBA, ObstacleType.COIN,
         ObstacleType.SHELL, ObstacleType.PIPE, ObstacleType.GAP,
         ObstacleType.BLOCK, ObstacleType.GOOMBA, ObstacleType.COIN

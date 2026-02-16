@@ -98,3 +98,30 @@ export const ASSETS = {
   CAR_BODY: '#e70000',
   CAR_WHEEL: '#000000'
 };
+
+export const PHYSICS = {
+    GRAVITY: 1.5,
+    JUMP_FORCE: -22,
+    FAST_FALL: 2.5,
+    ROTATION_SPEED: 3,
+    MAX_ROTATION: 25,
+    MIN_ROTATION: -35,
+    GROUND_HEIGHT: 80,
+    COLLISION_PADDING: 4
+};
+
+export const GAME_RULES = {
+    MAX_PROJECTILES: 5,
+    PROJECTILE_COOLDOWN: 150,
+    PROJECTILE_LIFETIME_X: 100, // Distance beyond screen
+    BOSS_SPAWN_OFFSET: 100,
+    BOSS_Y_LIMIT_LOW: 50,
+    BOSS_Y_LIMIT_HIGH: 350,
+    BOSS_ATTACK_SPEED: 9,
+    BOSS_ATTACK_SIZE: 30,
+    SCORE_COIN: 50,
+    SCORE_POWERUP: 1000,
+    SCORE_ENEMY: 100,
+    SCORE_BOSS: 5000,
+    SPAWN_BUFFER: 200, // cleanup buffer
+};
