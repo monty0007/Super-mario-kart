@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GameState, LevelConfig, ObstacleType } from './types';
 import GameCanvas from './components/GameCanvas';
 import { generateLevel } from './services/geminiService';
-import { Loader2, Zap, Play, RotateCcw, Map } from 'lucide-react';
+import { Loader2, Zap, Play, RotateCcw, Map, Trophy } from 'lucide-react';
 
 const PRESET_LEVELS: LevelConfig[] = [
   {
@@ -12,24 +12,24 @@ const PRESET_LEVELS: LevelConfig[] = [
     description: "The legendary beginning. A faithful recreation of the classic map.",
     theme: 'OVERWORLD',
     obstacles: [
-       ObstacleType.QUESTION_BLOCK, ObstacleType.COIN, ObstacleType.BLOCK, ObstacleType.QUESTION_BLOCK, ObstacleType.BLOCK, ObstacleType.PIPE,
-       ObstacleType.GOOMBA, ObstacleType.PIPE, ObstacleType.PIPE, ObstacleType.COIN,
+       ObstacleType.QUESTION_BLOCK, ObstacleType.COIN, ObstacleType.BLOCK, ObstacleType.QUESTION_BLOCK, ObstacleType.BLOCK, ObstacleType.PIRANHA,
+       ObstacleType.GOOMBA, ObstacleType.PIPE, ObstacleType.PIPE, ObstacleType.FIRE_FLOWER,
        ObstacleType.GAP, ObstacleType.BLOCK, ObstacleType.SHELL, ObstacleType.QUESTION_BLOCK, ObstacleType.GOOMBA,
-       ObstacleType.PIPE, ObstacleType.COIN, ObstacleType.PIPE, ObstacleType.GOOMBA, ObstacleType.GAP,
+       ObstacleType.PIRANHA, ObstacleType.COIN, ObstacleType.PIPE, ObstacleType.GOOMBA, ObstacleType.GAP,
        ObstacleType.BLOCK, ObstacleType.SHELL, ObstacleType.BLOCK, ObstacleType.GAP, ObstacleType.GOOMBA,
-       ObstacleType.PIPE, ObstacleType.COIN, ObstacleType.COIN, ObstacleType.BLOCK, ObstacleType.QUESTION_BLOCK
+       ObstacleType.PIRANHA, ObstacleType.COIN, ObstacleType.FIRE_FLOWER, ObstacleType.BLOCK, ObstacleType.QUESTION_BLOCK
     ]
   },
   {
     id: 'dungeon_1_2',
     name: "Deep Dungeon",
     difficulty: "Medium",
-    description: "Underground blues. Watch your head!",
+    description: "Underground blues. Watch out for plants!",
     theme: 'UNDERGROUND',
     obstacles: [
         ObstacleType.BLOCK, ObstacleType.BLOCK, ObstacleType.BLOCK, ObstacleType.GAP, 
-        ObstacleType.PIPE, ObstacleType.SHELL, ObstacleType.BLOCK, ObstacleType.COIN,
-        ObstacleType.GAP, ObstacleType.PIPE, ObstacleType.PIPE, ObstacleType.GOOMBA,
+        ObstacleType.PIRANHA, ObstacleType.SHELL, ObstacleType.BLOCK, ObstacleType.FIRE_FLOWER,
+        ObstacleType.GAP, ObstacleType.PIRANHA, ObstacleType.PIPE, ObstacleType.GOOMBA,
         ObstacleType.QUESTION_BLOCK, ObstacleType.COIN, ObstacleType.GAP, ObstacleType.BLOCK
     ]
   },
@@ -41,9 +41,9 @@ const PRESET_LEVELS: LevelConfig[] = [
     theme: 'CASTLE',
     obstacles: [
         ObstacleType.GAP, ObstacleType.GAP, ObstacleType.BLOCK, ObstacleType.GAP,
-        ObstacleType.PIPE, ObstacleType.SHELL, ObstacleType.SHELL, ObstacleType.GAP,
-        ObstacleType.BLOCK, ObstacleType.QUESTION_BLOCK, ObstacleType.GAP, ObstacleType.GAP,
-        ObstacleType.PIPE, ObstacleType.COIN, ObstacleType.BLOCK, ObstacleType.GOOMBA
+        ObstacleType.PIRANHA, ObstacleType.SHELL, ObstacleType.SHELL, ObstacleType.GAP,
+        ObstacleType.BLOCK, ObstacleType.FIRE_FLOWER, ObstacleType.GAP, ObstacleType.GAP,
+        ObstacleType.PIRANHA, ObstacleType.COIN, ObstacleType.BLOCK, ObstacleType.GOOMBA
     ]
   }
 ];
@@ -55,6 +55,7 @@ function App() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
 
   useEffect(() => {
       const saved = localStorage.getItem('kart_highscore');
@@ -86,9 +87,11 @@ function App() {
         const newLevel = await generateLevel(prompt);
         setLevelData(newLevel);
         setGameState(GameState.MENU);
+        setAnnouncement("Level Generated Successfully");
     } catch (e) {
         console.error(e);
         setGameState(GameState.MENU);
+        setAnnouncement("Level Generation Failed");
     } finally {
         setIsLoading(false);
     }
@@ -96,6 +99,12 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      
+      {/* Accessibility Live Region */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </div>
+
       <div className="relative w-full max-w-4xl aspect-[4/3] bg-black rounded-xl overflow-hidden shadow-2xl border-4 border-gray-800">
         
         {/* Game Canvas */}
@@ -104,6 +113,7 @@ function App() {
           setGameState={setGameState} 
           levelData={levelData}
           onScoreUpdate={setScore}
+          onAnnounce={setAnnouncement}
         />
 
         {/* UI Overlay: HUD */}
@@ -214,10 +224,35 @@ function App() {
            </div>
         )}
 
+        {/* UI Overlay: Victory */}
+        {gameState === GameState.VICTORY && (
+           <div className="absolute inset-0 bg-yellow-900/90 flex flex-col items-center justify-center text-white z-50 backdrop-blur-sm">
+             <Trophy size={64} className="text-yellow-400 mb-4" />
+             <h2 className="text-4xl md:text-5xl text-yellow-400 mb-6 font-['Press_Start_2P'] drop-shadow-[4px_4px_0_rgba(0,0,0,1)] text-center leading-relaxed">
+                 COURSE<br/>CLEAR!
+             </h2>
+             
+             <div className="bg-black/40 p-6 rounded-lg border border-yellow-500/30 mb-8 text-center min-w-[250px]">
+                 <p className="text-gray-400 text-sm mb-2">FINAL SCORE</p>
+                 <p className="text-3xl text-white mb-4">{score}</p>
+                 <div className="w-full h-px bg-gray-600 mb-4"></div>
+                 <p className="text-green-400 text-xs">BOSS DEFEATED!</p>
+             </div>
+             
+             <button 
+                onClick={() => setGameState(GameState.MENU)}
+                className="bg-white text-black hover:bg-gray-200 font-bold py-3 px-8 rounded shadow-[0_4px_0_#999] active:shadow-none active:translate-y-1 transition-all flex items-center gap-2 font-['Press_Start_2P'] text-xs"
+              >
+                <RotateCcw size={16} /> NEXT RACE
+              </button>
+           </div>
+        )}
+
         {/* Controls Hint */}
         {gameState === GameState.PLAYING && (
             <div className="absolute bottom-4 right-4 text-white/40 text-[10px] pointer-events-none font-sans bg-black/50 p-2 rounded">
-                WASD / ARROWS to MOVE & JUMP
+                W / UP to JUMP<br/>
+                SPACE to SHOOT (Requires Flower)
             </div>
         )}
 

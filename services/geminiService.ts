@@ -11,9 +11,10 @@ export const generateLevel = async (prompt: string): Promise<LevelConfig> => {
       model: modelId,
       contents: `Generate a Mario-style level configuration based on this description: "${prompt}". 
       The level should be a sequence of obstacles.
-      Obstacle types available: PIPE, GOOMBA, BLOCK, QUESTION_BLOCK, GAP, COIN, SHELL.
+      Obstacle types available: PIPE, GOOMBA, BLOCK, QUESTION_BLOCK, GAP, COIN, SHELL, FIRE_FLOWER, PIRANHA.
+      PIRANHA usually appears near PIPE. FIRE_FLOWER should be rare (powerup).
       Provide a difficulty rating (Easy, Medium, Hard), a theme (OVERWORLD, UNDERGROUND, CASTLE), and a short fun description.
-      Return at least 30-50 items in the sequence for a decent run. Make it feel like a real platformer level.`,
+      Return at least 40 items in the sequence for a decent run.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -37,7 +38,7 @@ export const generateLevel = async (prompt: string): Promise<LevelConfig> => {
     if (!text) throw new Error("No response from Gemini");
     
     const data = JSON.parse(text);
-    return { ...data, id: 'gen_' + Date.now() };
+    return { ...data, id: 'gen_' + Date.now(), isCustom: true };
   } catch (error) {
     console.error("Level generation failed:", error);
     // Fallback level
@@ -48,8 +49,8 @@ export const generateLevel = async (prompt: string): Promise<LevelConfig> => {
       description: "Network error? No problem. Here is a classic pipe run.",
       theme: 'OVERWORLD',
       obstacles: [
-        ObstacleType.COIN, ObstacleType.COIN, ObstacleType.PIPE, 
-        ObstacleType.QUESTION_BLOCK, ObstacleType.SHELL, ObstacleType.GAP, 
+        ObstacleType.COIN, ObstacleType.QUESTION_BLOCK, ObstacleType.FIRE_FLOWER, 
+        ObstacleType.PIPE, ObstacleType.PIRANHA, ObstacleType.GAP, 
         ObstacleType.PIPE, ObstacleType.GOOMBA, ObstacleType.COIN,
         ObstacleType.SHELL, ObstacleType.PIPE, ObstacleType.GAP,
         ObstacleType.BLOCK, ObstacleType.GOOMBA, ObstacleType.COIN
