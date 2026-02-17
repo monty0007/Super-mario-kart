@@ -2,7 +2,6 @@
 
 A retro-style kart racing game built with **React**, **TypeScript**, and **Vite**. Features a Mario Kart-inspired theme, boss fights, and an "AI" level generator!
 
-![Main Menu](./screenshots/main_menu.png)
 
 ## 🎮 Play Live
 [**Play Super Kart Bros**](https://super-kart-bros-zbjy7okoq-uc.a.run.app)
@@ -28,11 +27,9 @@ A retro-style kart racing game built with **React**, **TypeScript**, and **Vite*
 ## 📸 Screenshots
 
 ### Gameplay
-![Gameplay](./screenshots/gameplay.png)
 *Race through pipes, avoid Goombas, and collect coins!*
 
 ### Boss Battle
-![Boss Fight](./screenshots/boss_fight.png)
 *Defeat the giant cat boss in low gravity!*
 
 ## 🛠️ Tech Stack
