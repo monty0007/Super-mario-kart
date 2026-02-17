@@ -1,0 +1,15 @@
+{
+    "short_name": "Super Kart",
+    "name": "Super Kart Bros: AI Edition",
+    "icons": [
+        {
+            "src": "favicon.svg",
+            "type": "image/svg+xml",
+            "sizes": "192x192 512x512"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
+}

@@ -1,8 +1,10 @@
 export const GRAVITY = 1.5;
-export const JUMP_FORCE = -22; 
+export const MOON_GRAVITY = 1.0; // Increased from 0.6 (less floaty)
+export const JUMP_FORCE = -22;
+export const MOON_JUMP_FORCE = -25; // Decreased from -30 (less extreme)
 export const GAME_SPEED_INITIAL = 6;
-export const MAX_GAME_SPEED = 14;
-export const SPEED_INCREMENT = 0.0008;
+export const MAX_GAME_SPEED = 11; // Reduced from 14
+export const SPEED_INCREMENT = 0.0005; // Slower acceleration
 export const GROUND_HEIGHT = 80;
 
 export const CANVAS_WIDTH = 800;
@@ -21,8 +23,8 @@ export const CAR_COLORS = [
 
 export const DIFFICULTY_SETTINGS: Record<string, { speedMult: number, gapMult: number, maxSpeed: number, spawnRate: number }> = {
   Easy: { speedMult: 0.6, gapMult: 1.5, maxSpeed: 10, spawnRate: 1.2 },
-  Medium: { speedMult: 1.0, gapMult: 1.0, maxSpeed: 14, spawnRate: 1.0 },
-  Hard: { speedMult: 1.4, gapMult: 0.8, maxSpeed: 18, spawnRate: 0.8 },
+  Medium: { speedMult: 0.85, gapMult: 1.1, maxSpeed: 12, spawnRate: 1.1 }, // Reduced speed from 1.0 to 0.85
+  Hard: { speedMult: 1.2, gapMult: 0.9, maxSpeed: 15, spawnRate: 0.9 }, // Reduced speed from 1.4 to 1.2
 };
 
 export const ENTITY_CONFIG = {
@@ -36,9 +38,9 @@ export const ENTITY_CONFIG = {
     FLOWER: { WIDTH: 30, HEIGHT: 30 },
   },
   BOSS: {
-    WIDTH: 180, 
-    HEIGHT: 150, 
-    SPAWN_DISTANCE: 2500, 
+    WIDTH: 180,
+    HEIGHT: 150,
+    SPAWN_DISTANCE: 2500,
     HP: 15,
     SHOOT_INTERVAL: 80
   },
@@ -59,7 +61,7 @@ export const THEMES = {
   OVERWORLD: {
     SKY: '#63adff',
     GROUND: '#5c9e2b',
-    GROUND_DETAIL: '#7ac24a', 
+    GROUND_DETAIL: '#7ac24a',
     PIPE: '#00c200',
     PIPE_HIGHLIGHT: '#55ff55',
     BLOCK: '#c97726',
@@ -100,28 +102,28 @@ export const ASSETS = {
 };
 
 export const PHYSICS = {
-    GRAVITY: 1.5,
-    JUMP_FORCE: -22,
-    FAST_FALL: 2.5,
-    ROTATION_SPEED: 3,
-    MAX_ROTATION: 25,
-    MIN_ROTATION: -35,
-    GROUND_HEIGHT: 80,
-    COLLISION_PADDING: 4
+  GRAVITY: 1.5,
+  JUMP_FORCE: -22,
+  FAST_FALL: 2.5,
+  ROTATION_SPEED: 3,
+  MAX_ROTATION: 25,
+  MIN_ROTATION: -35,
+  GROUND_HEIGHT: 80,
+  COLLISION_PADDING: 4
 };
 
 export const GAME_RULES = {
-    MAX_PROJECTILES: 5,
-    PROJECTILE_COOLDOWN: 150,
-    PROJECTILE_LIFETIME_X: 100, // Distance beyond screen
-    BOSS_SPAWN_OFFSET: 100,
-    BOSS_Y_LIMIT_LOW: 50,
-    BOSS_Y_LIMIT_HIGH: 350,
-    BOSS_ATTACK_SPEED: 9,
-    BOSS_ATTACK_SIZE: 30,
-    SCORE_COIN: 50,
-    SCORE_POWERUP: 1000,
-    SCORE_ENEMY: 100,
-    SCORE_BOSS: 5000,
-    SPAWN_BUFFER: 200, // cleanup buffer
+  MAX_PROJECTILES: 5,
+  PROJECTILE_COOLDOWN: 150,
+  PROJECTILE_LIFETIME_X: 100, // Distance beyond screen
+  BOSS_SPAWN_OFFSET: 100,
+  BOSS_Y_LIMIT_LOW: 50,
+  BOSS_Y_LIMIT_HIGH: 350,
+  BOSS_ATTACK_SPEED: 9,
+  BOSS_ATTACK_SIZE: 30,
+  SCORE_COIN: 50,
+  SCORE_POWERUP: 1000,
+  SCORE_ENEMY: 100,
+  SCORE_BOSS: 5000,
+  SPAWN_BUFFER: 200, // cleanup buffer
 };

@@ -30,42 +30,42 @@ export const TouchControls: React.FC<TouchControlsProps> = ({ engine }) => {
   });
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-20 flex flex-col justify-end p-4 md:hidden">
-      <div className="flex justify-between items-end w-full pb-4">
-        
+    <div className="absolute inset-0 pointer-events-none z-20 flex flex-col justify-end p-4 md:hidden select-none">
+      <div className="flex justify-between items-end w-full pb-6 safe-area-pb">
+
         {/* Left Hand: Movement */}
-        <div className="flex gap-4 pointer-events-auto">
-          <button 
-            className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full border-2 border-white/50 flex items-center justify-center active:bg-white/40 active:scale-95 transition-all"
+        <div className="flex gap-6 pointer-events-auto pl-4">
+          <button
+            className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full border-2 border-white/30 flex items-center justify-center active:bg-white/30 active:scale-95 transition-all shadow-lg active:shadow-inner touch-manipulation"
             aria-label="Left"
             {...btnProps('LEFT')}
           >
-            <ArrowLeft className="text-white w-8 h-8" />
+            <ArrowLeft className="text-white w-10 h-10 drop-shadow-md" />
           </button>
-          <button 
-            className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full border-2 border-white/50 flex items-center justify-center active:bg-white/40 active:scale-95 transition-all"
+          <button
+            className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full border-2 border-white/30 flex items-center justify-center active:bg-white/30 active:scale-95 transition-all shadow-lg active:shadow-inner touch-manipulation"
             aria-label="Right"
             {...btnProps('RIGHT')}
           >
-            <ArrowRight className="text-white w-8 h-8" />
+            <ArrowRight className="text-white w-10 h-10 drop-shadow-md" />
           </button>
         </div>
 
         {/* Right Hand: Actions */}
-        <div className="flex gap-4 pointer-events-auto items-end">
-           <button 
-            className="w-14 h-14 bg-red-500/40 backdrop-blur-sm rounded-full border-2 border-red-300/50 flex items-center justify-center active:bg-red-500/60 active:scale-95 transition-all mb-2"
+        <div className="flex gap-6 pointer-events-auto items-end pr-4">
+          <button
+            className="w-16 h-16 bg-red-500/30 backdrop-blur-md rounded-full border-2 border-red-400/50 flex items-center justify-center active:bg-red-500/50 active:scale-95 transition-all shadow-lg active:shadow-inner mb-4 touch-manipulation"
             aria-label="Shoot"
             {...btnProps('SHOOT')}
           >
-            <Zap className="text-white w-6 h-6" />
+            <Zap className="text-white w-8 h-8 drop-shadow-md" />
           </button>
-          <button 
-            className="w-20 h-20 bg-green-500/40 backdrop-blur-sm rounded-full border-2 border-green-300/50 flex items-center justify-center active:bg-green-500/60 active:scale-95 transition-all"
+          <button
+            className="w-24 h-24 bg-green-500/30 backdrop-blur-md rounded-full border-2 border-green-400/50 flex items-center justify-center active:bg-green-500/50 active:scale-95 transition-all shadow-lg active:shadow-inner touch-manipulation"
             aria-label="Jump"
             {...btnProps('JUMP')}
           >
-            <ChevronUp className="text-white w-10 h-10" />
+            <ChevronUp className="text-white w-12 h-12 drop-shadow-md" />
           </button>
         </div>
 

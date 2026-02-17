@@ -1,5 +1,5 @@
 import { GameState, Player, Obstacle, LevelConfig, Boss, Projectile, ObstacleType, LevelTheme } from "../types";
-import { GRAVITY, JUMP_FORCE, GAME_SPEED_INITIAL, ENTITY_CONFIG, SPEED_INCREMENT, THEMES, ASSETS, DIFFICULTY_SETTINGS, PHYSICS, GAME_RULES } from "../constants";
+import { GRAVITY, JUMP_FORCE, MOON_GRAVITY, MOON_JUMP_FORCE, GAME_SPEED_INITIAL, ENTITY_CONFIG, SPEED_INCREMENT, THEMES, ASSETS, DIFFICULTY_SETTINGS, PHYSICS, GAME_RULES } from "../constants";
 import { Physics } from "./Physics";
 import { InputManager } from "./InputManager";
 import { GameRenderer } from "./Renderer";
@@ -220,10 +220,14 @@ export class GameEngine {
         this.handlePlayerMovement();
 
         // 2. Game Speed
-        const maxSpeed = settings.maxSpeed;
-        const accel = SPEED_INCREMENT * settings.speedMult;
-        this.gameSpeed = Math.min(this.gameSpeed + accel, maxSpeed);
-        this.distance += this.gameSpeed;
+        if (this.boss.active) {
+            this.gameSpeed = 0; // Lock screen
+        } else {
+            const maxSpeed = settings.maxSpeed;
+            const accel = SPEED_INCREMENT * settings.speedMult;
+            this.gameSpeed = Math.min(this.gameSpeed + accel, maxSpeed);
+            this.distance += this.gameSpeed;
+        }
 
         // 3. Spawning
         this.handleSpawning(settings);
@@ -244,7 +248,7 @@ export class GameEngine {
 
         // Jump
         if (this.input.isActionActive('JUMP') && this.player.isGrounded) {
-            this.player.vy = JUMP_FORCE; // Imported from constants
+            this.player.vy = this.boss.active ? MOON_JUMP_FORCE : JUMP_FORCE;
             this.player.isGrounded = false;
             this.player.rotation = PHYSICS.MIN_ROTATION;
         }
@@ -255,8 +259,15 @@ export class GameEngine {
         }
 
         // Gravity
-        this.player.vy += GRAVITY;
+        const currentGravity = this.boss.active ? MOON_GRAVITY : GRAVITY;
+        this.player.vy += currentGravity;
         this.player.y += this.player.vy;
+
+        // Clamp Y (Don't fly off screen top)
+        if (this.player.y < 0) {
+            this.player.y = 0;
+            this.player.vy = 0;
+        }
 
         // Ground Collision
         const groundY = this.canvas.height - PHYSICS.GROUND_HEIGHT - this.player.height;
@@ -425,6 +436,18 @@ export class GameEngine {
             obs.x -= this.gameSpeed;
             if (obs.type === ObstacleType.GOOMBA) obs.x -= 2;
             if (obs.type === ObstacleType.SHELL) obs.x -= 4;
+
+            // Enemy Wall Collisions
+            if (obs.type === ObstacleType.GOOMBA || obs.type === ObstacleType.SHELL) {
+                for (const other of this.obstacles) {
+                    if (other === obs || !this.isSolid(other.type)) continue;
+                    if (Physics.checkCollision(obs, other)) {
+                        obs.vx = -(obs.vx || 2);
+                        if (obs.vx > 0) obs.x = other.x + other.width + 1;
+                        else obs.x = other.x - obs.width - 1;
+                    }
+                }
+            }
 
             // Powerup Physics
             if (obs.type === ObstacleType.FIRE_FLOWER && obs.vx !== undefined && obs.vx !== 0) {

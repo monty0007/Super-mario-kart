@@ -5,12 +5,14 @@ let ai: GoogleGenAI | null = null;
 
 export const generateLevel = async (prompt: string): Promise<LevelConfig> => {
   try {
-    if (!process.env.API_KEY) {
+    const apiKey = import.meta.env.VITE_API_KEY || process.env.VITE_API_KEY;
+    if (!apiKey) {
+      console.warn("API Key is missing, using fallback.");
       throw new Error("API Key is missing");
     }
 
     if (!ai) {
-      ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      ai = new GoogleGenAI({ apiKey });
     }
 
     const modelId = "gemini-3-flash-preview";
